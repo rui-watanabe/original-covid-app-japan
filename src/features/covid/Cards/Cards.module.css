@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.positive-cases {
+  border-left: 5px solid #ece02b;
+  border-radius: 0% !important;
+  margin: 2% 2% !important;
+}
+
+.severe-cases {
+  border-left: 5px solid #ff3333;
+  border-radius: 0% !important;
+  margin: 2% 2% !important;
+}
+
+.death-cases {
+  border-left: 5px solid #615e5f;
+  border-radius: 0% !important;
+  margin: 2% 2% !important;
+}
+
+.recovery-cases {
+  border-left: 5px solid #33a3ff;
+  border-radius: 0% !important;
+  margin: 2% 2% !important;
+}
+
+.hospitalization-cases {
+  border-left: 5px solid #e9890b;
+  border-radius: 0% !important;
+  margin: 2% 2% !important;
+}
+
+.test-cases {
+  border-left: 5px solid #3cb371;
+  border-radius: 0% !important;
+  margin: 2% 2% !important;
+}
+
+

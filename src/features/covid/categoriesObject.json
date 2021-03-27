@@ -1,0 +1,9 @@
+
+{
+  "positive-cases": "PCR検査陽性者数",
+  "severe-cases": "重症者数",
+  "death-cases": "死亡者数",
+  "recovery-cases": "退院、療養解除者数",
+  "hospitalization-cases":"入院治療者数",
+  "test-cases": "PCR検査数"
+}
