@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid } from '@material-ui/core';
+import {
+  // AppBar,
+  // Toolbar,
+  // Typography,
+  Container,
+  Grid,
+} from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './DashBoard.module.css';
 import {
@@ -36,6 +42,19 @@ const DashBoard: React.FC = () => {
 
   return (
     <div>
+      {/* <AppBar position="absolute" color="default">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            ORIGINAL COVID APP JAPAN
+          </Typography>
+          <div>
+            <Typography variant="body1">
+              {loadDate}
+              更新
+            </Typography>
+          </div>
+        </Toolbar>
+      </AppBar> */}
       <Container className={classes.content}>
         <div className={styles.container}>
           <SwitchCategory loadDate={loadDate} />
