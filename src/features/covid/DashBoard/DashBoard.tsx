@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  // AppBar,
-  // Toolbar,
-  // Typography,
+  AppBar,
+  Toolbar,
+  Typography,
   Container,
   Grid,
+  Box,
 } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './DashBoard.module.css';
@@ -14,6 +15,7 @@ import {
   fetchAsyncGetLatestData,
   selectCurrentCategoryFlg,
   selectCurrentData,
+  selectErrorMessage,
 } from '../covidSlice';
 import SwitchCategory from '../SwitchCategory/SwitchCategory';
 import Chart from '../Chart/Chart';
@@ -34,15 +36,25 @@ const DashBoard: React.FC = () => {
   const loadDate = new Date(
     currentDataList[currentDataList.length - 1].date
   ).toLocaleDateString();
+  const errorMessage = useSelector(selectErrorMessage);
 
   useEffect(() => {
     dispatch(fetchAsyncGetData('positive-cases'));
     dispatch(fetchAsyncGetLatestData());
   }, [dispatch]);
 
+  if (errorMessage !== '') {
+    return (
+      <Box textAlign="center">
+        <h1>{errorMessage}</h1>
+        <p>しばらくしてから再度お問い合わせください</p>
+      </Box>
+    );
+  }
+
   return (
     <div>
-      {/* <AppBar position="absolute" color="default">
+      <AppBar position="absolute" color="default">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             ORIGINAL COVID APP JAPAN
@@ -54,7 +66,7 @@ const DashBoard: React.FC = () => {
             </Typography>
           </div>
         </Toolbar>
-      </AppBar> */}
+      </AppBar>
       <Container className={classes.content}>
         <div className={styles.container}>
           <SwitchCategory loadDate={loadDate} />

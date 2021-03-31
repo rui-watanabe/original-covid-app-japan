@@ -1,7 +1,9 @@
 module.exports = (app) => {
   app.use((req, res, next) => {
-    console.log(process.env)
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header(
+      'Access-Control-Allow-Origin',
+      process.env.REACT_APP_CONTAINER_HOST
+    );
     next();
   });
 };

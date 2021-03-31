@@ -27,8 +27,8 @@ window.renderJapan = (containerId, history) => {
   serviceWorker.unregister();
 };
 
-window.unmountJapan = (containerId) => {
-  ReactDOM.unmountComponentAtNode(
-    document.getElementById(containerId) as HTMLElement
-  );
-};
+// window.unmountJapan = (containerId) => {
+//   ReactDOM.unmountComponentAtNode(
+//     document.getElementById(containerId) as HTMLElement
+//   );
+// };
