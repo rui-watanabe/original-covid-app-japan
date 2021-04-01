@@ -24,6 +24,7 @@ type covidState = {
   currentCategory: categoriesType;
   currentData: covidDataObject;
   latestDataList: latestDataListType;
+  errorMessage: string;
 };
 
 const categoriesKeysArray = Object.keys(
@@ -58,6 +59,7 @@ const initialState: covidState = {
       latestCount: '0',
     },
   ],
+  errorMessage: '',
 };
 
 const moldApi = (data: covidDataLatestObject[]): covidDataObject => {
@@ -73,32 +75,52 @@ const moldApi = (data: covidDataLatestObject[]): covidDataObject => {
 export const fetchAsyncGetData = createAsyncThunk(
   'covid/getData',
   async (category: categoriesType) => {
-    const { data } = await axios.get<covidDataLatestObject[]>(
-      `${apiUrl}/${category}?apikey=${process.env.REACT_APP_COVID_API_KEY}`
-    );
-    const moldData: covidDataObject = moldApi(data.splice(-14, 14));
-    return { category, data: moldData };
+    let currentDataErrorMessage = '';
+    try {
+      const { data } = await axios.get<covidDataLatestObject[]>(
+        `${apiUrl}/${category}?apikey=${process.env.REACT_APP_COVID_API_KEY}`
+      );
+      const moldData: covidDataObject = moldApi(data.splice(-14, 14));
+      return { category, data: moldData, currentDataErrorMessage };
+    } catch (error) {
+      const { status, statusText } = error.response;
+      currentDataErrorMessage = `Error! HTTP Status: ${status} ${statusText}`;
+      return {
+        category: initialState.currentCategory,
+        data: initialState.currentData,
+        currentDataErrorMessage,
+      };
+    }
   }
 );
 
 export const fetchAsyncGetLatestData = createAsyncThunk(
   'covid/getLatest',
   async () => {
-    const retStateList: Promise<latestDataState>[] = categoriesKeysArray.map(
-      async (mapCategory: categoriesType) => {
-        const { data } = await axios.get<covidDataLatestObject[]>(
-          `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_COVID_API_KEY}`
-        );
-        const moldData: covidDataObject = moldApi(data.splice(-1, 1));
-        const stateObject: latestDataState = {
-          eachCategory: mapCategory,
-          latestCount: moldData[0].count,
-        };
-        return stateObject;
-      }
-    );
-    const stateList = await Promise.all(retStateList);
-    return { stateList };
+    let stateList: latestDataState[];
+    let latestDataErrorMessage = '';
+    try {
+      const retStateList: Promise<latestDataState>[] = categoriesKeysArray.map(
+        async (mapCategory: categoriesType) => {
+          const { data } = await axios.get<covidDataLatestObject[]>(
+            `${apiUrl}/${mapCategory}?apikey=${process.env.REACT_APP_COVID_API_KEY}`
+          );
+          const moldData: covidDataObject = moldApi(data.splice(-1, 1));
+          const stateObject: latestDataState = {
+            eachCategory: mapCategory,
+            latestCount: moldData[0].count,
+          };
+          return stateObject;
+        }
+      );
+      stateList = await Promise.all(retStateList);
+      return { stateList, latestDataErrorMessage };
+    } catch (error) {
+      const { status, statusText } = error.response;
+      latestDataErrorMessage = `Error! HTTP Status: ${status} ${statusText}`;
+      stateList = initialState.latestDataList;
+      return { stateList, latestDataErrorMessage };
+    }
   }
 );
 
@@ -113,6 +135,7 @@ const covidSlice = createSlice({
         currentCategoryFlg: 1,
         currentCategory: action.payload.category,
         currentData: action.payload.data,
+        errorMessage: action.payload.currentDataErrorMessage,
       };
     });
     builder.addCase(fetchAsyncGetLatestData.fulfilled, (state, action) => {
@@ -120,6 +143,7 @@ const covidSlice = createSlice({
         ...state,
         currentCategoryFlg: 0,
         latestDataList: action.payload.stateList,
+        errorMessage: action.payload.latestDataErrorMessage,
       };
     });
   },
@@ -139,5 +163,9 @@ export const selectCurrentData: (state: RootState) => covidDataObject = (
 export const selectLatestDataList: (state: RootState) => latestDataListType = (
   state: RootState
 ) => state.covid.latestDataList;
+
+export const selectErrorMessage: (state: RootState) => string = (
+  state: RootState
+) => state.covid.errorMessage;
 
 export default covidSlice.reducer;
